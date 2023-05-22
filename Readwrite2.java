@@ -8,7 +8,7 @@ public class Readwrite2 {
         FileOutputStream outfile = null;
         try{
             outfile = new FileOutputStream(args[0]) ;
-        } catch{
+        } catch(FileNotFoundException e){
             System.err.println("ファイルがありません") ;
             System.exit(1) ;
         }
