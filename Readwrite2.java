@@ -10,7 +10,7 @@ public class Readwrite2 {
             outfile = new FileOutputStream(args[0]) ;
         } catch(FileNotFoundException e){
             System.err.println("ファイルがありません") ;
-            System.exit(1) ;
+            check = false;
         }
 
 
