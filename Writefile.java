@@ -9,7 +9,7 @@ public class Readwrite2 {
         try{
             outfile = new FileOutputStream(args[0]) ;
         } catch(FileNotFoundException e){
-            System.err.println("ファイルがありません") ;
+            System.err.println("ファイルがありません => ");
             check = false;
         }
 
@@ -17,19 +17,22 @@ public class Readwrite2 {
         while(check){
             try{
                 int n = System.in.read(buff);
-                System.out.println(n);
                 System.out.write(buff, 0, n);
-                for(int i = 0; i < n; i++){
-                    System.out.println("Buff ["+i+"] = "+buff[i]);
-                }
                 if(buff[0] == '.'){
                     check = false;
                 }
+                outfile.write(buff, 0, n);
+                
             } catch(Exception e){
-                System.err.println("Err");
+                System.err.println("ループErr");
                 System.exit(1);
             }
         }
 
+        try {
+            outfile.close();
+        } catch (IOException e) {
+            System.out.println("ファイル終了Err => ");
+        }
     }
 }
