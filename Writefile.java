@@ -4,15 +4,14 @@ public class Readwrite2 {
     public static void main(String args[]){
         byte[] buff = new byte[1024];
         boolean check = true;
-
         FileOutputStream outfile = null;
+
         try{
             outfile = new FileOutputStream(args[0]) ;
         } catch(FileNotFoundException e){
-            System.err.println("ファイルがありません => ");
+            System.err.println("ファイルがありません");
             check = false;
         }
-
 
         while(check){
             try{
@@ -32,7 +31,7 @@ public class Readwrite2 {
         try {
             outfile.close();
         } catch (IOException e) {
-            System.out.println("ファイル終了Err => ");
+            System.out.println("ファイル終了Err");
         }
     }
 }

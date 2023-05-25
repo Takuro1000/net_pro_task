@@ -1,6 +1,6 @@
 import java.io.*;
 
-public class Readfile {
+public class Readfile2 {
     public static void main(String args[]){
         byte[] buff = new byte[1024];
         boolean check = true;
@@ -18,10 +18,13 @@ public class Readfile {
                 int n = infile.read(buff);
                 System.out.write(buff, 0, n);
                 if(buff[0] == '.'){
-                    check = false;
+                    break;
                 } 
+                for (int i=0;i < n;i++){
+                    System.out.println("buff ["+i+"] = "+buff[i]);
+                }
             } catch(Exception e){
-                    System.err.println("Err");
+                    System.err.println(e);
                     check = false;
             }
         }
