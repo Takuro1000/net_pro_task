@@ -1,6 +1,6 @@
 import java.io.*;
 
-public class Readwrite2 {
+public class Writefile {
     public static void main(String args[]){
         byte[] buff = new byte[1024];
         boolean check = true;
