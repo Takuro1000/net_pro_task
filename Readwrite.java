@@ -1,5 +1,3 @@
-import java.io.*;
-
 public class Readwrite {
     public static void main(String args[]){
         byte[] buff = new byte[1024];
