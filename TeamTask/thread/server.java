@@ -1,5 +1,4 @@
 package TeamTask.thread;
-
 import java.util.*;
 import java.net.*;
 import java.nio.charset.StandardCharsets;
@@ -8,29 +7,17 @@ import java.io.*;
 public class server {
     public static void main(String[] args){
         //変数宣言
-        ServerThread servthread = null;
         Random random = new Random();
         boolean check = true;
         ServerSocket servsocket = null;
+        ServRunnble[] servRunnble = null;
         Socket socket = null;
-        OutputStream out;
-        String outstr;
         int player = 0;
         int flag=0;
-        String[] role = null;
         //人狼宣言
         try{
             player = Integer.parseInt(args[0]);
             int randomNum = random.nextInt(player);
-            role = new String[player];
-            for(int i = 0; i < player; i++){
-                if(i==randomNum){
-                    role[i]="人狼";
-                }
-                else{
-                    role[i]="市民";
-                }
-            }
         }catch(Exception e){
             System.err.println("引数がありません"+'\n'+e);
             System.exit(1);
@@ -49,16 +36,7 @@ public class server {
             try{
                 socket = servsocket.accept();
                 System.out.println("接続されました:"+socket.getRemoteSocketAddress());
-                //役職伝達
-                outstr = "\n"
-                        +"こんにちはあなたの役職は、\n"
-                        +role[flag]+" です。";
 
-                out = socket.getOutputStream();
-                for(int i = 0; i < outstr.length(); i++){
-                    out.write(stringToBytes(outstr));
-                }
-                out.write('\n');
                 socket.close();
                 flag++;
                 //サーバー終了
@@ -74,18 +52,44 @@ public class server {
         //正常終了
         System.exit(0);
     }
-
-    public static byte[] stringToBytes(String str) {
-    return str.getBytes(StandardCharsets.UTF_8);
-    }
 }
 
-class ServerThread extends Thread{
+class ServRunnble implements Runnable{
     Socket socket = null;
-    ServerThread(Socket s){
+    citizen role = null;
+    OutputStream out = null;
+    String outstr = null;
+    ServRunnble(Socket s,int roleflag){
         try{
-            
+            socket = s;
+        }catch(Exception e){
+            System.err.println(e);
+            System.exit(1);
         }
+        if(roleflag==1){
+            role = new werewolf();
+        }else{
+            role = new citizen();
+        }
+    }
+    public void run(){
+        try{
+            //役職伝達
+            outstr = "\n"
+                    +"こんにちはあなたの役職は、\n"
+                    +role.getRole()+" です。"+"\n";
+
+            out = socket.getOutputStream();
+            for(int i = 0; i < outstr.length(); i++){
+                out.write(stringToBytes(outstr));
+            }
+        }catch(Exception e){
+            System.out.println(e);
+            System.exit(1);
+        }
+    }
+    public static byte[] stringToBytes(String str) {
+    return str.getBytes(StandardCharsets.UTF_8);
     }
 }
 
@@ -96,6 +100,9 @@ class citizen {
     }
     citizen(String r){
         myrole = r;
+    }
+    String getRole(){
+        return myrole;
     }
 }
 
