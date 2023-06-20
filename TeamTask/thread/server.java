@@ -8,6 +8,7 @@ import java.io.*;
 public class server {
     public static void main(String[] args){
         //変数宣言
+        ServerThread servthread = null;
         Random random = new Random();
         boolean check = true;
         ServerSocket servsocket = null;
@@ -76,5 +77,30 @@ public class server {
 
     public static byte[] stringToBytes(String str) {
     return str.getBytes(StandardCharsets.UTF_8);
+    }
+}
+
+class ServerThread extends Thread{
+    Socket socket = null;
+    ServerThread(Socket s){
+        try{
+            
+        }
+    }
+}
+
+class citizen {
+    String myrole = null;
+    citizen(){
+        myrole = "市民";
+    }
+    citizen(String r){
+        myrole = r;
+    }
+}
+
+class werewolf extends citizen{
+    werewolf(){
+        super("人狼");
     }
 }
