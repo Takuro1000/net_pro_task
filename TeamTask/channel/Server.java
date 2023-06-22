@@ -19,7 +19,7 @@ public class Server {
     }
 
     static class ServerThread implements Runnable {
-        LinkedList<Comment> comments = new LinkedList<>();
+        LinkedList<String> comments = new LinkedList<>();
         ServerSocketChannel serverChannel;
         Selector selector;
         ByteBuffer buffer = ByteBuffer.allocate(1024);
@@ -100,35 +100,26 @@ public class Server {
             buffer.flip();
             String message = StandardCharsets.UTF_8.decode(buffer).toString();
             System.out.println("受信: " + message);
-            comments.add(new Comment(640, rand.nextInt(380) + 50, message));
+            comments.add(message);
         }
 
-        private void broadcastComments() {
-            Iterator<Comment> it = comments.iterator();
-            while (it.hasNext()) {
-                Comment comment = it.next();
-                comment.x--;
-                if (comment.x + calculateTextWidth(comment.comment) < 0) {
-                    it.remove();
+        private void broadcastComments() throws IOException {
+            ByteBuffer buffer = ByteBuffer.allocate(1024);
+            String comment;
+            while ((comment = comments.poll()) != null) {
+                buffer.clear();
+                buffer.put(comment.getBytes(StandardCharsets.UTF_8));
+                buffer.flip();
+
+                for (SelectionKey key : selector.keys()) {
+                    if (key.isValid() && key.channel() instanceof SocketChannel) {
+                        SocketChannel clientChannel = (SocketChannel) key.channel();
+                        clientChannel.write(buffer);
+                        buffer.rewind();
+                    }
                 }
             }
         }
 
-        private int calculateTextWidth(String text) {
-            // 仮の実装として、文字列の長さを幅として返す
-            return text.length() * 10;
-        }
-
-        class Comment {
-            int x;
-            int y;
-            String comment;
-
-            Comment(int x, int y, String comment) {
-                this.x = x;
-                this.y = y;
-                this.comment = comment;
-            }
-        }
     }
 }
