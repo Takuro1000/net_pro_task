@@ -1,6 +1,5 @@
 package TeamTask.channel;
 
-import java.awt.Graphics;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
@@ -13,146 +12,113 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Random;
 
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-
 public class Server {
 
     public static void main(String[] args) throws IOException {
-        new Thread(new TestWindow()).start();
+        new Thread(new ServerThread()).start();
     }
 
-    static class TestWindow extends JFrame implements Runnable {
+    static class ServerThread implements Runnable {
         LinkedList<Comment> comments = new LinkedList<>();
-        ServerSocketChannel channel;
-        Selector sel;
-        ByteBuffer bb = ByteBuffer.allocate(1024);
+        ServerSocketChannel serverChannel;
+        Selector selector;
+        ByteBuffer buffer = ByteBuffer.allocate(1024);
         Random rand = new Random();
 
-        public TestWindow() {
-            setSize(640, 480);
-            add(new DrawCanvas());
-            setVisible(true);
-            initServer();
-        }
-
-        // サーバーソケットの開始
-        void initServer() {
+        public ServerThread() {
             try {
-                channel = ServerSocketChannel.open();
-                channel.socket().bind(new InetSocketAddress(10009));// 受信ポートを指定
-                channel.configureBlocking(false);
-                sel = Selector.open();
-                // 接続要求を監視
-                channel.register(sel, SelectionKey.OP_ACCEPT);
+                serverChannel = ServerSocketChannel.open();
+                serverChannel.socket().bind(new InetSocketAddress(10009));
+                serverChannel.configureBlocking(false);
+
+                selector = Selector.open();
+                serverChannel.register(selector, SelectionKey.OP_ACCEPT);
+
+                System.out.println("サーバーが起動しました。");
             } catch (IOException e) {
-                System.out.println("サーバー開始エラー");
+                System.out.println("サーバーの起動に失敗しました。");
                 e.printStackTrace();
             }
         }
 
-        // 接続受け付けメソッド
-        void accept() {
-            try {
-                SocketChannel sc = channel.accept();
-                if (sc == null)
-                    return;
-                // 非ブロックモードで接続リストに追加
-                sc.configureBlocking(false);
-                // 受信を監視
-                sc.register(sel, SelectionKey.OP_READ);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-
-        // データ受信メソッド
-        void recv(SocketChannel sc) {
-            try {
-                // 接続していないなら閉じる
-                if (!sc.isConnected()) {
-                    System.out.println("接続終了");
-                    sc.close();
-                }
-                // バイナリ受信領域初期化
-                bb.clear();
-
-                // 受信
-                sc.read(bb);
-
-                // ロード準備
-                bb.flip();
-
-                // 文字列に変換
-                String result = StandardCharsets.UTF_8.decode(bb).toString();
-                if (result.length() > 0) {
-                    System.out.println("受信:" + result);
-                    // ランダムな位置でメッセージを出現させる
-                    comments.add(new Comment(640, rand.nextInt(380) + 50, result));
-                }
-            } catch (IOException e) {
-                try {
-                    System.out.println("接続終了");
-                    sc.close();
-                } catch (IOException e1) {
-                }
-            }
-        }
-
-        // 通信処理
-        void networkLogic() {
-            try {
-                // イベントが発生している場合は処理させます
-                while (sel.selectNow() > 0) {
-                    Iterator<SelectionKey> it = sel.selectedKeys().iterator();
-                    while (it.hasNext()) {
-                        SelectionKey key = it.next();
-                        it.remove();
-                        if (key.isAcceptable()) {
-                            accept();
-                        } else if (key.isReadable()) {
-                            recv((SocketChannel) key.channel());
-                        }
-                    }
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-
-        // アニメーションループ
         @Override
         public void run() {
-            while (true) {
+            try {
+                while (true) {
+                    selector.select();
+
+                    Iterator<SelectionKey> selectedKeys = selector.selectedKeys().iterator();
+                    while (selectedKeys.hasNext()) {
+                        SelectionKey key = selectedKeys.next();
+                        selectedKeys.remove();
+
+                        if (!key.isValid()) {
+                            continue;
+                        }
+
+                        if (key.isAcceptable()) {
+                            accept(key);
+                        } else if (key.isReadable()) {
+                            receive(key);
+                        }
+                    }
+
+                    broadcastComments();
+                }
+            } catch (IOException e) {
+                System.out.println("サーバーでエラーが発生しました。");
+                e.printStackTrace();
+            } finally {
                 try {
-                    Thread.sleep(40);
-                    networkLogic();
-                    repaint();
-                } catch (InterruptedException e) {
+                    selector.close();
+                    serverChannel.close();
+                } catch (IOException e) {
                     e.printStackTrace();
                 }
             }
         }
 
-        // 描画キャンバス
-        class DrawCanvas extends JPanel {
-            // 描画
-            public void paintComponent(Graphics g) {
-                super.paintComponent(g);
-                Iterator<Comment> it = comments.iterator();
-                while (it.hasNext()) {
-                    Comment comment = it.next();
-                    g.drawString(comment.comment, comment.x, comment.y);
-                    if (comment.x + g.getFontMetrics().stringWidth(comment.comment) < 0) {
-                        it.remove();
-                    } else {
-                        comment.x--;
-                    }
+        private void accept(SelectionKey key) throws IOException {
+            ServerSocketChannel serverChannel = (ServerSocketChannel) key.channel();
+            SocketChannel clientChannel = serverChannel.accept();
+            clientChannel.configureBlocking(false);
+            clientChannel.register(selector, SelectionKey.OP_READ);
+            System.out.println("クライアントが接続しました。");
+        }
+
+        private void receive(SelectionKey key) throws IOException {
+            SocketChannel clientChannel = (SocketChannel) key.channel();
+            buffer.clear();
+            int bytesRead = clientChannel.read(buffer);
+            if (bytesRead == -1) {
+                // クライアントが切断された場合
+                key.cancel();
+                clientChannel.close();
+                System.out.println("クライアントが切断されました。");
+                return;
+            }
+            buffer.flip();
+            String message = StandardCharsets.UTF_8.decode(buffer).toString();
+            System.out.println("受信: " + message);
+            comments.add(new Comment(640, rand.nextInt(380) + 50, message));
+        }
+
+        private void broadcastComments() {
+            Iterator<Comment> it = comments.iterator();
+            while (it.hasNext()) {
+                Comment comment = it.next();
+                comment.x--;
+                if (comment.x + calculateTextWidth(comment.comment) < 0) {
+                    it.remove();
                 }
             }
         }
 
-        // メッセージ情報
+        private int calculateTextWidth(String text) {
+            // 仮の実装として、文字列の長さを幅として返す
+            return text.length() * 10;
+        }
+
         class Comment {
             int x;
             int y;
