@@ -6,12 +6,14 @@ import java.nio.ByteBuffer;
 import java.nio.channels.*;
 import java.util.HashMap;
 import java.util.Map;
-
+import java.io.InputStreamReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Random;
+import java.io.Reader;
+import java.io.BufferedReader;
 
 public class WerewolfServer {
 
@@ -42,7 +44,7 @@ public class WerewolfServer {
     private void sendRoleToClient(Socket clientSocket) throws IOException {
         // ここで役職の情報を生成・設定するロジックを実装する
         String role = generateRole(); // 役職を生成するメソッド例
-
+        System.out.println(clientSocket.getLocalAddress()+"に役職を設定");
         // クライアントに役職を送信
         PrintWriter writer = new PrintWriter(clientSocket.getOutputStream(), true);
         writer.println(role);
