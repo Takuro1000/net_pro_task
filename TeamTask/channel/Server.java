@@ -16,6 +16,7 @@ public class Server {
 
     public static void main(String[] args) throws IOException {
         new Thread(new ServerThread()).start();
+            //スレッドのインスタンスを作成しRunnbleとしてServerThreadインスタンスを引数として渡し、スレッドを開始します
     }
 
     static class ServerThread implements Runnable {
@@ -28,10 +29,14 @@ public class Server {
         public ServerThread() {
             try {
                 serverChannel = ServerSocketChannel.open();
+                    //ソケットチャンネルをオープン　ServerSocketChannel型のserverChannel変数の静的メソッドopen()
                 serverChannel.socket().bind(new InetSocketAddress(10009));
+                    //.socket()でserverChannelに関連したソケットを収得し、.bind()でソケットをローカルアドレスにバインド(関連付け)します
+                    //new InetSocketAddress(port)はソケット・アドレスを作成します。この場合、IPアドレスはワイルドカード・アドレスで、ポート番号は指定された値です
                 serverChannel.configureBlocking(false);
-
-                selector = Selector.open();
+                    //チャンネルのブロックモードをfalseに設定（非ブロックモード）
+                    //非ブロックモードにすることによりIOの処理を待機せずに以降の処理を行う
+                selector = Selector.open(); //セレクタをオープンする
                 serverChannel.register(selector, SelectionKey.OP_ACCEPT);
 
                 System.out.println("サーバーが起動しました。");
