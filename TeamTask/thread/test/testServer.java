@@ -18,13 +18,12 @@ public class testServer {
         try {
             serverSocket = new ServerSocket(10010);
         } catch (IOException e) {
-            System.out.println("サーバー作成中にエラーが発生しました");
             e.printStackTrace();
         }
 
         try {
             roop = Integer.parseInt(args[0]);
-        } catch (Exception e) {
+        } catch (NumberFormatException e) { //NumberFormatException-文字列が解析可能な整数を含んでいない場合
             System.out.println("引数なしのため１回実行");
         }
 
@@ -33,7 +32,7 @@ public class testServer {
                 Socket socket = serverSocket.accept();
                 threads.add(new ServerThread(socket));
             } catch (IOException e) {
-                System.out.println("サーバーの接続待機中にエラーが発生しました");
+                System.err.println("サーバーの接続待機中にエラーが発生しました");
                 e.printStackTrace();
             }
         }
