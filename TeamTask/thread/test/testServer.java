@@ -60,9 +60,12 @@ public class testServer {
                 outputStream.flush();
                 System.out.println("送信成功: " + message);
             } catch (IOException e) {
-                System.out.println("送信中にエラーが発生しました。");
                 e.printStackTrace();
             }
+        }
+
+        public static String receive(Socket socket){    //クライアントからの入力を受け取ってStringをreturn
+            return "";  //←消していいやつ
         }
     }
 }
