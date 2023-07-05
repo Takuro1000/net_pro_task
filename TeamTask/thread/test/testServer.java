@@ -3,10 +3,7 @@ package TeamTask.thread.test;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
 import java.net.ServerSocket;
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.io.PrintWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.io.InputStream;
@@ -22,13 +19,11 @@ public class testServer {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
         try {
             roop = Integer.parseInt(args[0]);
         } catch (NumberFormatException e) { //NumberFormatException-文字列が解析可能な整数を含んでいない場合
             System.out.println("引数なしのため１回実行");
         }
-
         for (int i = 0; i < roop; i++) {
             try {
                 Socket socket = serverSocket.accept();
@@ -41,10 +36,18 @@ public class testServer {
         for (ServerThread thr : threads) {
             thr.start();
         }
-        while(true){
-            for(ServerThread thr : threads){
-                System.out.println(thr.getState());
+        for (ServerThread thr : threads) {
+            while(true){
+                if(thr.getState()==Thread.State.TIMED_WAITING){
+                    thr.interrupt();
+                    break;
+                }
             }
+        }
+        try{
+            serverSocket.close();
+        }catch(IOException e){
+            e.printStackTrace();
         }
     }
 
@@ -57,7 +60,7 @@ public class testServer {
 
         @Override
         public void run() {
-            sendln(socket, getName());
+            send(socket, getName());
             wait10min();
             closeSocket(socket);
         }
@@ -66,6 +69,7 @@ public class testServer {
             try{
                 sleep(6000000);
             }catch(InterruptedException e){
+                System.out.println("割り込まれました");
             }
         }
 
@@ -113,5 +117,6 @@ public class testServer {
             }
             return new String(buff, StandardCharsets.UTF_8);
         }
+
     }
 }
