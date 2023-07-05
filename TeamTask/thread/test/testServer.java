@@ -1,6 +1,7 @@
 package TeamTask.thread.test;
 
 import java.net.Socket;
+import java.nio.charset.StandardCharsets;
 import java.net.ServerSocket;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -8,6 +9,7 @@ import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.io.InputStream;
 
 public class testServer {
     public static void main(String args[]) {
@@ -51,6 +53,11 @@ public class testServer {
         @Override
         public void run() {
             send(socket, getName());
+            try{
+                socket.close();
+            }catch(IOException e){
+                e.printStackTrace();
+            }
         }
 
         public static void send(Socket socket, String message) {
@@ -65,7 +72,26 @@ public class testServer {
         }
 
         public static String receive(Socket socket){    //クライアントからの入力を受け取ってStringをreturn
-            return "";  //←消していいやつ
+            byte[] buff = new byte[1024];
+            InputStream inputStream = null;
+            try{
+                inputStream = socket.getInputStream();
+            }catch(IOException e){
+                e.printStackTrace();
+            }
+
+            try{
+                inputStream.read(buff);
+            }catch(IOException e){
+                e.printStackTrace();
+            }
+
+            try{
+                inputStream.close();
+            }catch(IOException e){
+                e.printStackTrace();
+            }
+            return new String(buff, StandardCharsets.UTF_8);
         }
     }
 }
