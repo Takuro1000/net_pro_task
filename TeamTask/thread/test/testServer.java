@@ -52,7 +52,7 @@ public class testServer {
 
         @Override
         public void run() {
-            send(socket, getName());
+            sendln(socket, getName());
             try{
                 socket.close();
             }catch(IOException e){
@@ -69,6 +69,9 @@ public class testServer {
             } catch (IOException e) {
                 e.printStackTrace();
             }
+        }
+        public static void sendln(Socket socket, String message){
+            send(socket, message+"\n");
         }
 
         public static String receive(Socket socket){    //クライアントからの入力を受け取ってStringをreturn
