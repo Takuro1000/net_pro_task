@@ -41,7 +41,11 @@ public class testServer {
         for (ServerThread thr : threads) {
             thr.start();
         }
-        
+        while(true){
+            for(ServerThread thr : threads){
+                System.out.println(thr.getState());
+            }
+        }
     }
 
     static class ServerThread extends Thread {
@@ -54,7 +58,15 @@ public class testServer {
         @Override
         public void run() {
             sendln(socket, getName());
+            wait10min();
             closeSocket(socket);
+        }
+
+        public static void wait10min(){
+            try{
+                sleep(6000000);
+            }catch(InterruptedException e){
+            }
         }
 
         public static void closeSocket(Socket socket){
