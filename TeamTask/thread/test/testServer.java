@@ -41,6 +41,7 @@ public class testServer {
         for (ServerThread thr : threads) {
             thr.start();
         }
+        
     }
 
     static class ServerThread extends Thread {
@@ -53,6 +54,10 @@ public class testServer {
         @Override
         public void run() {
             sendln(socket, getName());
+            closeSocket(socket);
+        }
+
+        public static void closeSocket(Socket socket){
             try{
                 socket.close();
             }catch(IOException e){
