@@ -16,7 +16,7 @@ public class testClient {
             System.exit(1);
         }
 
-        InputData(socket);
+        receive(socket);
         
         try{
             socket.close();
@@ -27,7 +27,7 @@ public class testClient {
     }
 
     // メッセージをサーバ側から受け取るメソッド
-    public static void InputData(Socket socket) {
+    public static void receive(Socket socket) {
         byte[] buff = new byte[1024];
         InputStream instr = null;
 
@@ -47,7 +47,7 @@ public class testClient {
     }
 
     // メッセージをサーバ側に送るメソッド
-    public static void OutputData(Socket socket){
+    public static void send(Socket socket){
         byte[] buff = new byte[1024];
         OutputStream outstr = null;
 
