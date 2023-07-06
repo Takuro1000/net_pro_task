@@ -1,6 +1,7 @@
 package TeamTask.thread.test;
 
 import java.net.*;
+import java.nio.charset.StandardCharsets;
 import java.io.*;
 
 public class testClient {
@@ -17,7 +18,7 @@ public class testClient {
         }
 
         receive(socket);
-        send(socket);
+        scSend(socket);
         closeSocket(socket);
     }
 
@@ -47,17 +48,27 @@ public class testClient {
     }
 
     // メッセージをサーバ側に送るメソッド
-    public static void send(Socket socket){
-        byte[] buff = new byte[1024];
+    public static void send (Socket socket,String message){
+        send(socket, message.getBytes());
+    }
+    public static void send (Socket socket,byte[] buff){
         OutputStream outstr = null;
-
+        int n = buff.length;
         try {
             outstr = socket.getOutputStream();
-            int n = System.in.read(buff);
             outstr.write(buff,0,n);
         }catch (IOException e){
             e.printStackTrace();
+        }        
+    }
+    public static void scSend(Socket socket){
+        byte[] buff = new byte[1024];
+        try{
+            System.in.read(buff);
+        }catch(IOException e){
+            e.printStackTrace();
         }
+        send(socket, buff);
     }
 
 }
