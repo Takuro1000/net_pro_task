@@ -17,13 +17,18 @@ public class testClient {
         }
 
         receive(socket);
-        
+        send(socket);
+        closeSocket(socket);
+    }
+
+    public static void closeSocket(Socket socket){
         try{
             socket.close();
         } catch(IOException e){
             e.printStackTrace();
+        } finally{
+            System.exit(0);
         }
-        System.exit(0);
     }
 
     // メッセージをサーバ側から受け取るメソッド
@@ -39,11 +44,6 @@ public class testClient {
             System.err.println("instr Exception");
             e.printStackTrace();
         }
-        try {
-            instr.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 
     // メッセージをサーバ側に送るメソッド
@@ -53,14 +53,8 @@ public class testClient {
 
         try {
             outstr = socket.getOutputStream();
-            System.out.println("メッセージを入力してください");
             int n = System.in.read(buff);
             outstr.write(buff,0,n);
-        }catch (IOException e){
-            e.printStackTrace();
-        }
-        try {
-            outstr.close();
         }catch (IOException e){
             e.printStackTrace();
         }
