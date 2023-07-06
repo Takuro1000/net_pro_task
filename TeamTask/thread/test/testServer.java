@@ -53,22 +53,23 @@ public class testServer {
 
     static class ServerThread extends Thread {
         Socket socket = null;
-        public static String username = null;
         ServerThread(Socket s) {
             this.socket = s;
         }
 
         @Override
         public void run() {
-            initializeUserName(socket);
+            setName(initializeUserName(socket));
             wait10min();
             closeSocket(socket);
         }
 
-        public static void initializeUserName(Socket socket){
+        public static String initializeUserName(Socket socket){
+            String username=null;
             send(socket, "接続されました名前を入れてください:");
-            username = receive(socket).trim();
             System.out.println(username+"が接続しました。");
+            username = receive(socket).trim();
+            return username;
         }
         
         public static void wait10min(){
