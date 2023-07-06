@@ -1,27 +1,30 @@
 package TeamTask.thread.test;
 
 import java.net.*;
-import java.nio.charset.StandardCharsets;
 import java.io.*;
 
 public class testClient {
     public static void main(String args[]) {
-        int port = 10010;
-        String ip = "localhost";
-        Socket socket = null;
-
-        try {
-            socket = new Socket(ip, port);
-        } catch (IOException e) {
-            e.printStackTrace();
-            System.exit(1);
-        }
+        Socket socket = initializeSocket();
 
         receive(socket);
         scSend(socket);
         closeSocket(socket);
     }
 
+    public static Socket initializeSocket(){
+        Socket socket = null;
+        int port = 10010;
+        String ip = "localhost";
+        try {
+            socket = new Socket(ip, port);
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.exit(1);
+        }
+        return socket;
+    }
+    
     public static void closeSocket(Socket socket){
         try{
             socket.close();
