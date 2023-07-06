@@ -53,23 +53,29 @@ public class testServer {
 
     static class ServerThread extends Thread {
         Socket socket = null;
-
+        public static String username = null;
         ServerThread(Socket s) {
             this.socket = s;
         }
 
         @Override
         public void run() {
-            send(socket, getName());
+            initializeUserName(socket);
             wait10min();
             closeSocket(socket);
         }
 
+        public static void initializeUserName(Socket socket){
+            send(socket, "接続されました名前を入れてください:");
+            username = receive(socket).trim();
+            System.out.println(username+"が接続しました。");
+        }
+        
         public static void wait10min(){
             try{
                 sleep(6000000);
             }catch(InterruptedException e){
-                System.out.println("割り込まれました");
+                return;
             }
         }
 
@@ -81,16 +87,20 @@ public class testServer {
             }
         }
 
-        public static void send(Socket socket, String message) {
+        public static void send(Socket socket, String message, String name) {
             try {
                 OutputStream outputStream = socket.getOutputStream();
                 outputStream.write(message.getBytes());
                 outputStream.flush();
-                System.out.println("送信成功: " + message);
+                System.out.println(name+" 送信成功: " + message);
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
+        public static void send(Socket socket, String message){
+            send(socket, message, "");
+        }
+
         public static void sendln(Socket socket, String message){
             send(socket, message+"\n");
         }
