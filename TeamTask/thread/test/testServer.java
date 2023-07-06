@@ -67,8 +67,8 @@ public class testServer {
         public static String initializeUserName(Socket socket){
             String username=null;
             send(socket, "接続されました名前を入れてください:");
-            System.out.println(username+"が接続しました。");
             username = receive(socket).trim();
+            System.out.println(username+"が接続しました。");
             return username;
         }
         
