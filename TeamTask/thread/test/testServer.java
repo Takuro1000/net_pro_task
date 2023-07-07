@@ -14,14 +14,10 @@ public class testServer {
         ArrayList<ServerThread> threads = new ArrayList<>();
         ServerSocket serverSocket = null;
 
-        try {
-            serverSocket = new ServerSocket(10010);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        serverSocket = initializeSocket();
         try {
             roop = Integer.parseInt(args[0]);
-        } catch (NumberFormatException e) { //NumberFormatException-文字列が解析可能な整数を含んでいない場合
+        } catch (NumberFormatException e) { // NumberFormatException-文字列が解析可能な整数を含んでいない場合
             System.out.println("引数なしのため１回実行");
         }
         for (int i = 0; i < roop; i++) {
@@ -37,22 +33,33 @@ public class testServer {
             thr.start();
         }
         for (ServerThread thr : threads) {
-            while(true){
-                if(thr.getState()==Thread.State.TIMED_WAITING){
+            while (true) {
+                if (thr.getState() == Thread.State.TIMED_WAITING) {
                     thr.interrupt();
                     break;
                 }
             }
         }
-        try{
+        try {
             serverSocket.close();
-        }catch(IOException e){
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
+    static ServerSocket initializeSocket() {
+        int port = 10010;
+        ServerSocket serverSocket=null;
+        try {
+            serverSocket = new ServerSocket(port);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return serverSocket;
+    }
     static class ServerThread extends Thread {
         Socket socket = null;
+
         ServerThread(Socket s) {
             this.socket = s;
         }
@@ -64,26 +71,26 @@ public class testServer {
             closeSocket(socket);
         }
 
-        public static String initializeUserName(Socket socket){
-            String username=null;
+        public static String initializeUserName(Socket socket) {
+            String username = null;
             send(socket, "接続されました名前を入れてください:");
             username = receive(socket).trim();
-            System.out.println(username+"が接続しました。");
+            System.out.println(username + "が接続しました。");
             return username;
         }
-        
-        public static void wait10min(){
-            try{
+
+        public static void wait10min() {
+            try {
                 sleep(6000000);
-            }catch(InterruptedException e){
+            } catch (InterruptedException e) {
                 return;
             }
         }
 
-        public static void closeSocket(Socket socket){
-            try{
+        public static void closeSocket(Socket socket) {
+            try {
                 socket.close();
-            }catch(IOException e){
+            } catch (IOException e) {
                 e.printStackTrace();
             }
         }
@@ -93,37 +100,38 @@ public class testServer {
                 OutputStream outputStream = socket.getOutputStream();
                 outputStream.write(message.getBytes());
                 outputStream.flush();
-                System.out.println(name+" 送信成功: " + message);
+                System.out.println(name + " 送信成功: " + message);
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
-        public static void send(Socket socket, String message){
+
+        public static void send(Socket socket, String message) {
             send(socket, message, "");
         }
 
-        public static void sendln(Socket socket, String message){
-            send(socket, message+"\n");
+        public static void sendln(Socket socket, String message) {
+            send(socket, message + "\n");
         }
 
-        public static String receive(Socket socket){    //クライアントからの入力を受け取ってStringをreturn
+        public static String receive(Socket socket) { // クライアントからの入力を受け取ってStringをreturn
             byte[] buff = new byte[1024];
             InputStream inputStream = null;
-            try{
+            try {
                 inputStream = socket.getInputStream();
-            }catch(IOException e){
+            } catch (IOException e) {
                 e.printStackTrace();
             }
 
-            try{
+            try {
                 inputStream.read(buff);
-            }catch(IOException e){
+            } catch (IOException e) {
                 e.printStackTrace();
             }
 
-            try{
+            try {
                 inputStream.close();
-            }catch(IOException e){
+            } catch (IOException e) {
                 e.printStackTrace();
             }
             return new String(buff, StandardCharsets.UTF_8);
