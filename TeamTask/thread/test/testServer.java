@@ -29,11 +29,15 @@ public class testServer {
                 e.printStackTrace();
             }
         }
+        threadsStart(threads);
+        threadsInterrupt(threads);
+        closeServerSocket(serverSocket);
+    }
+
+    static void threadsStart(ArrayList<ServerThread> threads) {
         for (ServerThread thr : threads) {
             thr.start();
         }
-        threadsInterrupt(threads);
-        closeServerSocket(serverSocket);
     }
 
     static void threadsInterrupt(ArrayList<ServerThread> threads) {
