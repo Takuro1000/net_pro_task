@@ -32,6 +32,11 @@ public class testServer {
         for (ServerThread thr : threads) {
             thr.start();
         }
+        threadsInterrupt(threads);
+        closeServerSocket(serverSocket);
+    }
+
+    static void threadsInterrupt(ArrayList<ServerThread> threads) {
         for (ServerThread thr : threads) {
             while (true) {
                 if (thr.getState() == Thread.State.TIMED_WAITING) {
@@ -40,7 +45,6 @@ public class testServer {
                 }
             }
         }
-        closeServerSocket(serverSocket);
     }
 
     static void closeServerSocket(ServerSocket serverSocket) {
