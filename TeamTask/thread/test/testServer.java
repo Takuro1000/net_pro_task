@@ -12,9 +12,8 @@ public class testServer {
     public static void main(String args[]) {
         int roop = 1;
         ArrayList<ServerThread> threads = new ArrayList<>();
-        ServerSocket serverSocket = null;
+        ServerSocket serverSocket = initializeServerSocket();
 
-        serverSocket = initializeServerSocket();
         try {
             roop = Integer.parseInt(args[0]);
         } catch (NumberFormatException e) { // NumberFormatException-文字列が解析可能な整数を含んでいない場合
