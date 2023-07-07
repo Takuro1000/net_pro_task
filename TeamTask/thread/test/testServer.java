@@ -14,7 +14,7 @@ public class testServer {
         ArrayList<ServerThread> threads = new ArrayList<>();
         ServerSocket serverSocket = null;
 
-        serverSocket = initializeSocket();
+        serverSocket = initializeServerSocket();
         try {
             roop = Integer.parseInt(args[0]);
         } catch (NumberFormatException e) { // NumberFormatException-文字列が解析可能な整数を含んでいない場合
@@ -47,7 +47,7 @@ public class testServer {
         }
     }
 
-    static ServerSocket initializeSocket() {
+    static ServerSocket initializeServerSocket() {
         int port = 10010;
         ServerSocket serverSocket=null;
         try {
@@ -57,6 +57,7 @@ public class testServer {
         }
         return serverSocket;
     }
+
     static class ServerThread extends Thread {
         Socket socket = null;
 
