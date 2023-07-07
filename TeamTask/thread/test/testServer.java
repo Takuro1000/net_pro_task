@@ -40,6 +40,10 @@ public class testServer {
                 }
             }
         }
+        closeServerSocket(serverSocket);
+    }
+
+    static void closeServerSocket(ServerSocket serverSocket) {
         try {
             serverSocket.close();
         } catch (IOException e) {
@@ -49,7 +53,7 @@ public class testServer {
 
     static ServerSocket initializeServerSocket() {
         int port = 10010;
-        ServerSocket serverSocket=null;
+        ServerSocket serverSocket = null;
         try {
             serverSocket = new ServerSocket(port);
         } catch (IOException e) {
