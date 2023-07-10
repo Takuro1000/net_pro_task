@@ -70,10 +70,15 @@ public class testServer {
     }
 
     static class ServerThread extends Thread {
+        Player player = null;
         Socket socket = null;
 
         ServerThread(Socket s) {
             this.socket = s;
+        }
+        ServerThread(Socket s,Player player) {
+            this(s);
+            this.player = player;
         }
 
         @Override
@@ -149,5 +154,16 @@ public class testServer {
             return new String(buff, StandardCharsets.UTF_8);
         }
 
+    }
+
+    class Player{
+        String playerName = null;
+        boolean life = true;
+        String role = null;
+
+        Player(String name, String role){
+            this.playerName = name;
+            this.role = role;
+        }
     }
 }
