@@ -27,7 +27,7 @@ public class client {
         while(check){
             try{
                 int n = instr.read(buff);
-                //System.out.write(buff, 0, n);
+                System.out.write(buff, 0, n);
                 System.out.println(bytesToString(buff));
                 check = false;
             }catch(Exception e){
