@@ -10,16 +10,23 @@ import java.io.InputStream;
 
 public class testServer {
     public static void main(String args[]) {
-        int roop = 1;
+        int playerNum = 1;
         ArrayList<ServerThread> threads = new ArrayList<>();
         ServerSocket serverSocket = initializeServerSocket();
 
         try {
-            roop = Integer.parseInt(args[0]);
+            playerNum = Integer.parseInt(args[0]);
         } catch (NumberFormatException e) { // NumberFormatException-文字列が解析可能な整数を含んでいない場合
             System.out.println("引数なしのため１回実行");
         }
-        for (int i = 0; i < roop; i++) {
+        clientAccept(threads, playerNum, serverSocket);
+        threadsStart(threads);
+        threadsInterrupt(threads);
+        closeServerSocket(serverSocket);
+    }
+
+    static void clientAccept(ArrayList<ServerThread> threads, int roop, ServerSocket serverSocket){
+            for (int i = 0; i < roop; i++) {
             try {
                 Socket socket = serverSocket.accept();
                 threads.add(new ServerThread(socket));
@@ -28,9 +35,6 @@ public class testServer {
                 e.printStackTrace();
             }
         }
-        threadsStart(threads);
-        threadsInterrupt(threads);
-        closeServerSocket(serverSocket);
     }
 
     static void threadsStart(ArrayList<ServerThread> threads) {
