@@ -11,10 +11,14 @@ public class testClient {
         Socket socket = initializeSocket();
         InputStream inputStream = initializeInputStream(socket);
         OutputStream outputStream = initializeOutputStream(socket);
-
-        receive(inputStream);
-        scSend(outputStream);
-        closeSocket(socket);
+        try{
+            receive(inputStream);
+            scSend(outputStream);
+        }catch (Exception e){
+            e.printStackTrace();
+        }finally{
+            closeSocket(socket);
+        }
     }
 
     public static OutputStream initializeOutputStream(Socket socket) {
@@ -50,7 +54,7 @@ public class testClient {
         return socket;
     }
 
-    public static void closeSocket(Socket socket) {
+    public static void closeSocket(Socket socket){
         try {
             socket.close();
         } catch (IOException e) {
