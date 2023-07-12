@@ -11,13 +11,13 @@ public class testClient {
         Socket socket = initializeSocket();
         InputStream inputStream = initializeInputStream(socket);
         OutputStream outputStream = initializeOutputStream(socket);
-        try{
+        try {
             receive(inputStream);
             scSend(outputStream);
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
-        }finally{
-            closeSocket(socket);
+        } finally {
+            closeSocket(socket, inputStream, outputStream);
         }
     }
 
@@ -54,13 +54,24 @@ public class testClient {
         return socket;
     }
 
-    public static void closeSocket(Socket socket){
+    public static void closeSocket(Socket socket) {
         try {
             socket.close();
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
             System.exit(0);
+        }
+    }
+
+    public static void closeSocket(Socket socket, InputStream inputStream, OutputStream outputStream) {
+        try {
+            inputStream.close();
+            outputStream.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            closeSocket(socket);
         }
     }
 
