@@ -1,6 +1,7 @@
 package TeamTask.thread.test;
 
 import java.net.Socket;
+import java.nio.charset.StandardCharsets;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -74,7 +75,7 @@ public class testClient {
 
     // メッセージをサーバ側に送るメソッド
     public static void send(OutputStream outputStream, String message) {
-        send(outputStream, message.getBytes());
+        send(outputStream, message.getBytes(StandardCharsets.UTF_8));
     }
 
     public static void send(OutputStream outputStream, byte[] buff) {
