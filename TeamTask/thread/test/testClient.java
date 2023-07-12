@@ -9,14 +9,14 @@ public class testClient {
     public static void main(String args[]) {
         Socket socket = initializeSocket();
         InputStream inputStream = initializeInputStream(socket);
-        OutputStream outputStream = initiOutputStream(socket);
+        OutputStream outputStream = initializeOutputStream(socket);
 
         receive(inputStream);
         scSend(outputStream);
         closeSocket(socket);
     }
 
-    public static OutputStream initiOutputStream(Socket socket) {
+    public static OutputStream initializeOutputStream(Socket socket) {
         OutputStream outputStream = null;
         try {
             outputStream = socket.getOutputStream();
