@@ -14,6 +14,7 @@ public class testServer {
         ArrayList<ServerThread> threads = new ArrayList<>();
         ArrayList<Player> players = null;
         ServerSocket serverSocket = initializeServerSocket();
+        gamePhase gPhase = gamePhase.night;
 
         try {
             playerNum = Integer.parseInt(args[0]);
@@ -26,7 +27,7 @@ public class testServer {
         clientAccept(threads, playerNum, serverSocket);
         threadsStart(threads);
 
-        threadsInterrupt(threads);
+        threadsInterrupt(threads,gPhase);
         closeServerSocket(serverSocket);
     }
 
@@ -53,9 +54,12 @@ public class testServer {
         }
     }
 
-    static void threadsInterrupt(ArrayList<ServerThread> threads) {
+    static void threadsInterrupt(ArrayList<ServerThread> threads,gamePhase gamePhase) {
         for (ServerThread thr : threads) {
             while (true) {
+                if (thr.getState() == Thread.State.TIMED_WAITING) {
+                    thr.phase=gamePhase;
+                }
                 if (thr.getState() == Thread.State.TIMED_WAITING) {
                     thr.interrupt();
                     break;
@@ -88,7 +92,7 @@ public class testServer {
         Socket socket = null;
         InputStream inputStream = null;
         OutputStream outputStream = null;
-        gamePhase phase = gamePhase.night;
+        public gamePhase phase = gamePhase.start;
         boolean game = true;
 
         ServerThread(Socket s) {
@@ -111,15 +115,21 @@ public class testServer {
 
         public void game(){
             while(game){
+                wait10min();
                 switch(phase){
                     case start:
-                        wait10min();
-                        game = false;
+                        System.err.println("not use");
+                        break;
                     case day:
+                        System.out.println("phase:day");
+                        break;
                     case night:
-                        wait10min();
+                        System.out.println("phase:night");
                         game = false;
+                        break;
                     case end:
+                        System.out.println("phase:end");
+                        break;
                 }
             }
         }
@@ -156,6 +166,14 @@ public class testServer {
             try {
                 sleep(6000000);
             } catch (InterruptedException e) {
+                return;
+            }
+        }
+
+        public static void waitSec(int sec){
+            try{
+                sleep(sec*1000);
+            }catch(InterruptedException e){
                 return;
             }
         }
