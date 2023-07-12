@@ -22,8 +22,10 @@ public class testServer {
             System.exit(1);
         }
         initializePlayerArray(players, playerNum);
+
         clientAccept(threads, playerNum, serverSocket);
         threadsStart(threads);
+
         threadsInterrupt(threads);
         closeServerSocket(serverSocket);
     }
@@ -86,6 +88,8 @@ public class testServer {
         Socket socket = null;
         InputStream inputStream = null;
         OutputStream outputStream = null;
+        gamePhase phase = gamePhase.night;
+        boolean game = true;
 
         ServerThread(Socket s) {
             this.socket = s;
@@ -101,8 +105,21 @@ public class testServer {
             inputStream = initializeInputStream(socket);
             outputStream = initializeOutputStream(socket);
             setName(initializeUserName(outputStream, inputStream));
-            wait10min();
+            game();
             closeSocket(socket);
+        }
+
+        public void game(){
+            while(game){
+                switch(phase){
+                    case start:
+                    case day:
+                    case night:
+                        wait10min();
+                        game = false;
+                    case end:
+                }
+            }
         }
 
         public static InputStream initializeInputStream(Socket socket) {
@@ -151,18 +168,15 @@ public class testServer {
 
         public static void send(OutputStream outputStream, String message, String name) {
             try {
-                outputStream.write(message.getBytes());
-                outputStream.flush();
+                outputStream.write(message.getBytes(StandardCharsets.UTF_8));
                 System.out.println(name + " 送信成功: " + message);
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
-
         public static void send(OutputStream outputStream, String message) {
             send(outputStream, message, "");
         }
-
         public static void sendln(OutputStream outputStream, String message) {
             send(outputStream, message + "\n");
         }
@@ -199,5 +213,12 @@ public class testServer {
             this.playerName = name;
             this.role = role;
         }
+    }
+
+    enum gamePhase{
+        start,
+        day,
+        night,
+        end,
     }
 }
