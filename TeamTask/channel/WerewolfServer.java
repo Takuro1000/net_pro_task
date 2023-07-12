@@ -13,8 +13,9 @@ public class WerewolfServer {
     private static final int PORT = 10009;
 
     public void start() {
+        ServerSocket serverSocket = null;
         try {
-            ServerSocket serverSocket = new ServerSocket(PORT);
+            serverSocket = new ServerSocket(PORT);
             System.out.println("サーバーが起動しました。");
 
             while (true) {
@@ -32,12 +33,17 @@ public class WerewolfServer {
             System.out.println("サーバーでエラーが発生しました。");
             e.printStackTrace();
         }
+        try {
+            serverSocket.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private void sendRoleToClient(Socket clientSocket) throws IOException {
         // ここで役職の情報を生成・設定するロジックを実装する
         String role = generateRole(); // 役職を生成するメソッド例
-        System.out.println(clientSocket.getLocalAddress()+"に役職を設定");
+        System.out.println(clientSocket.getLocalAddress() + "に役職を設定");
         // クライアントに役職を送信
         PrintWriter writer = new PrintWriter(clientSocket.getOutputStream(), true);
         writer.println(role);
@@ -74,10 +80,11 @@ public class WerewolfServer {
             e.printStackTrace();
         }
     }
+
     private String generateRole() {
         // Implement your logic to generate a role
         // For example, you can have a list of roles and randomly select one
-        String[] roles = {"村人", "人狼", "占い師", "狂人"};
+        String[] roles = { "村人", "人狼", "占い師", "狂人" };
         Random rand = new Random();
         int index = rand.nextInt(roles.length);
         return roles[index];
