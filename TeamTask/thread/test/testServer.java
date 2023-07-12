@@ -12,21 +12,27 @@ public class testServer {
     public static void main(String args[]) {
         int playerNum = 1;
         ArrayList<ServerThread> threads = new ArrayList<>();
+        ArrayList<Player> players = null;
         ServerSocket serverSocket = initializeServerSocket();
 
         try {
             playerNum = Integer.parseInt(args[0]);
         } catch (NumberFormatException e) { // NumberFormatException-文字列が解析可能な整数を含んでいない場合
-            System.out.println("引数なしのため１回実行");
+            System.out.println("引数なしのため参加数1人");
         }
+        initializePlayerArray(players, playerNum);
         clientAccept(threads, playerNum, serverSocket);
         threadsStart(threads);
         threadsInterrupt(threads);
         closeServerSocket(serverSocket);
     }
 
-    static void clientAccept(ArrayList<ServerThread> threads, int roop, ServerSocket serverSocket){
-            for (int i = 0; i < roop; i++) {
+    static void initializePlayerArray(ArrayList<Player> players, int playerNum) {
+        players = new ArrayList<Player>(playerNum);
+    }
+
+    static void clientAccept(ArrayList<ServerThread> threads, int roop, ServerSocket serverSocket) {
+        for (int i = 0; i < roop; i++) {
             try {
                 Socket socket = serverSocket.accept();
                 threads.add(new ServerThread(socket));
@@ -76,13 +82,14 @@ public class testServer {
     static class ServerThread extends Thread {
         Player player = null;
         Socket socket = null;
-        InputStream inputStream =null;
+        InputStream inputStream = null;
         OutputStream outputStream = null;
 
         ServerThread(Socket s) {
             this.socket = s;
         }
-        ServerThread(Socket s,Player player) {
+
+        ServerThread(Socket s, Player player) {
             this(s);
             this.player = player;
         }
@@ -96,21 +103,21 @@ public class testServer {
             closeSocket(socket);
         }
 
-        public static InputStream initializeInputStream(Socket socket){
+        public static InputStream initializeInputStream(Socket socket) {
             InputStream inputStream = null;
-            try{
-                inputStream = socket.getInputStream();        
-            }catch(IOException e){
+            try {
+                inputStream = socket.getInputStream();
+            } catch (IOException e) {
                 e.printStackTrace();
             }
             return inputStream;
         }
 
-        public static OutputStream initializeOutputStream(Socket socket){
-            OutputStream outputStream =null;
-            try{
+        public static OutputStream initializeOutputStream(Socket socket) {
+            OutputStream outputStream = null;
+            try {
                 outputStream = socket.getOutputStream();
-            }catch(IOException e){
+            } catch (IOException e) {
                 e.printStackTrace();
             }
             return outputStream;
@@ -177,12 +184,16 @@ public class testServer {
 
     }
 
-    class Player{
+    class Player {
         String playerName = null;
         boolean life = true;
         String role = null;
 
-        Player(String name, String role){
+        Player() {
+
+        }
+
+        Player(String name, String role) {
             this.playerName = name;
             this.role = role;
         }
