@@ -1,5 +1,5 @@
 package TeamTask.thread;
-import java.util.*;
+
 import java.net.*;
 import java.nio.charset.StandardCharsets;
 import java.io.*;
@@ -7,17 +7,14 @@ import java.io.*;
 public class server {
     public static void main(String[] args){
         //変数宣言
-        Random random = new Random();
         boolean check = true;
         ServerSocket servsocket = null;
-        ServRunnble[] servRunnble = null;
         Socket socket = null;
         int player = 0;
         int flag=0;
         //人狼宣言
         try{
             player = Integer.parseInt(args[0]);
-            int randomNum = random.nextInt(player);
         }catch(Exception e){
             System.err.println("引数がありません"+'\n'+e);
             System.exit(1);
