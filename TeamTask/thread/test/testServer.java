@@ -121,14 +121,14 @@ public class testServer {
                         System.err.println("not use");
                         break;
                     case day:
-                        System.out.println("phase:day");
+                    System.out.println(phase.geString());
                         break;
                     case night:
-                        System.out.println("phase:night");
-                        game = false;
+                        System.out.println(phase.geString());
                         break;
                     case end:
-                        System.out.println("phase:end");
+                        System.out.println(phase.geString());
+                        game = false;
                         break;
                 }
             }
@@ -236,9 +236,17 @@ public class testServer {
     }
 
     enum gamePhase{
-        start,
-        day,
-        night,
-        end;
+        start("phase:start"),
+        day("phase:start"),
+        night("phase:start"),
+        end("phase:start");
+
+        private final String string;
+        private gamePhase(final String string){
+            this.string = string;
+        }
+        public String geString(){
+            return string;
+        }
     }
 }
