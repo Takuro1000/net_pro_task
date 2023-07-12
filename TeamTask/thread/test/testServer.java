@@ -72,6 +72,8 @@ public class testServer {
     static class ServerThread extends Thread {
         Player player = null;
         Socket socket = null;
+        InputStream inputStream =null;
+        OutputStream outputStream = null;
 
         ServerThread(Socket s) {
             this.socket = s;
@@ -83,15 +85,37 @@ public class testServer {
 
         @Override
         public void run() {
-            setName(initializeUserName(socket));
+            inputStream = initializeInputStream(socket);
+            outputStream = initializeOutputStream(socket);
+            setName(initializeUserName(outputStream, inputStream));
             wait10min();
             closeSocket(socket);
         }
 
-        public static String initializeUserName(Socket socket) {
+        public static InputStream initializeInputStream(Socket socket){
+            InputStream inputStream = null;
+            try{
+                inputStream = socket.getInputStream();        
+            }catch(IOException e){
+                e.printStackTrace();
+            }
+            return inputStream;
+        }
+
+        public static OutputStream initializeOutputStream(Socket socket){
+            OutputStream outputStream =null;
+            try{
+                outputStream = socket.getOutputStream();
+            }catch(IOException e){
+                e.printStackTrace();
+            }
+            return outputStream;
+        }
+
+        public static String initializeUserName(OutputStream outputStream, InputStream inputStream) {
             String username = null;
-            send(socket, "接続されました名前を入れてください:");
-            username = receive(socket).trim();
+            send(outputStream, "接続されました名前を入れてください:");
+            username = receive(inputStream).trim();
             System.out.println(username + "が接続しました。");
             return username;
         }
@@ -112,9 +136,8 @@ public class testServer {
             }
         }
 
-        public static void send(Socket socket, String message, String name) {
+        public static void send(OutputStream outputStream, String message, String name) {
             try {
-                OutputStream outputStream = socket.getOutputStream();
                 outputStream.write(message.getBytes());
                 outputStream.flush();
                 System.out.println(name + " 送信成功: " + message);
@@ -123,22 +146,16 @@ public class testServer {
             }
         }
 
-        public static void send(Socket socket, String message) {
-            send(socket, message, "");
+        public static void send(OutputStream outputStream, String message) {
+            send(outputStream, message, "");
         }
 
-        public static void sendln(Socket socket, String message) {
-            send(socket, message + "\n");
+        public static void sendln(OutputStream outputStream, String message) {
+            send(outputStream, message + "\n");
         }
 
-        public static String receive(Socket socket) { // クライアントからの入力を受け取ってStringをreturn
+        public static String receive(InputStream inputStream) { // クライアントからの入力を受け取ってStringをreturn
             byte[] buff = new byte[1024];
-            InputStream inputStream = null;
-            try {
-                inputStream = socket.getInputStream();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
 
             try {
                 inputStream.read(buff);
