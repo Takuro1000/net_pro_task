@@ -113,6 +113,8 @@ public class testServer {
             while(game){
                 switch(phase){
                     case start:
+                        wait10min();
+                        game = false;
                     case day:
                     case night:
                         wait10min();
@@ -219,6 +221,6 @@ public class testServer {
         start,
         day,
         night,
-        end,
+        end;
     }
 }
