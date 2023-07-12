@@ -10,7 +10,7 @@ import java.io.InputStream;
 
 public class testServer {
     public static void main(String args[]) {
-        int playerNum = 1;
+        int playerNum = 0;
         ArrayList<ServerThread> threads = new ArrayList<>();
         ArrayList<Player> players = null;
         ServerSocket serverSocket = initializeServerSocket();
@@ -18,7 +18,8 @@ public class testServer {
         try {
             playerNum = Integer.parseInt(args[0]);
         } catch (NumberFormatException e) { // NumberFormatException-文字列が解析可能な整数を含んでいない場合
-            System.out.println("引数なしのため参加数1人");
+            e.printStackTrace();
+            System.exit(1);
         }
         initializePlayerArray(players, playerNum);
         clientAccept(threads, playerNum, serverSocket);
@@ -41,6 +42,7 @@ public class testServer {
                 e.printStackTrace();
             }
         }
+        threads.trimToSize();
     }
 
     static void threadsStart(ArrayList<ServerThread> threads) {
