@@ -8,13 +8,35 @@ import java.io.OutputStream;
 public class testClient {
     public static void main(String args[]) {
         Socket socket = initializeSocket();
+        InputStream inputStream = initializeInputStream(socket);
+        OutputStream outputStream = initiOutputStream(socket);
 
-        receive(socket);
-        scSend(socket);
+        receive(inputStream);
+        scSend(outputStream);
         closeSocket(socket);
     }
 
-    public static Socket initializeSocket(){
+    public static OutputStream initiOutputStream(Socket socket) {
+        OutputStream outputStream = null;
+        try {
+            outputStream = socket.getOutputStream();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return outputStream;
+    }
+
+    public static InputStream initializeInputStream(Socket socket) {
+        InputStream inputStream = null;
+        try {
+            inputStream = socket.getInputStream();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return inputStream;
+    }
+
+    public static Socket initializeSocket() {
         Socket socket = null;
         int port = 10010;
         String ip = "localhost";
@@ -26,25 +48,23 @@ public class testClient {
         }
         return socket;
     }
-    
-    public static void closeSocket(Socket socket){
-        try{
+
+    public static void closeSocket(Socket socket) {
+        try {
             socket.close();
-        } catch(IOException e){
+        } catch (IOException e) {
             e.printStackTrace();
-        } finally{
+        } finally {
             System.exit(0);
         }
     }
 
     // メッセージをサーバ側から受け取るメソッド
-    public static void receive(Socket socket) {
+    public static void receive(InputStream inputStream) {
         byte[] buff = new byte[1024];
-        InputStream instr = null;
 
         try {
-            instr = socket.getInputStream();
-            int n = instr.read(buff);
+            int n = inputStream.read(buff);
             System.out.write(buff, 0, n);
         } catch (IOException e) {
             System.err.println("instr Exception");
@@ -53,27 +73,27 @@ public class testClient {
     }
 
     // メッセージをサーバ側に送るメソッド
-    public static void send (Socket socket,String message){
-        send(socket, message.getBytes());
+    public static void send(OutputStream outputStream, String message) {
+        send(outputStream, message.getBytes());
     }
-    public static void send (Socket socket,byte[] buff){
-        OutputStream outstr = null;
+
+    public static void send(OutputStream outputStream, byte[] buff) {
         int n = buff.length;
         try {
-            outstr = socket.getOutputStream();
-            outstr.write(buff,0,n);
-        }catch (IOException e){
-            e.printStackTrace();
-        }        
-    }
-    public static void scSend(Socket socket){
-        byte[] buff = new byte[1024];
-        try{
-            System.in.read(buff);
-        }catch(IOException e){
+            outputStream.write(buff, 0, n);
+        } catch (IOException e) {
             e.printStackTrace();
         }
-        send(socket, buff);
+    }
+
+    public static void scSend(OutputStream outputStream) {
+        byte[] buff = new byte[1024];
+        try {
+            System.in.read(buff);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        send(outputStream, buff);
     }
 
 }
