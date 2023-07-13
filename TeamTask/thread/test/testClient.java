@@ -12,7 +12,7 @@ public class testClient {
         InputStream inputStream = initializeInputStream(socket);
         OutputStream outputStream = initializeOutputStream(socket);
         try {
-            receive(inputStream);
+            prReceive(inputStream,false);
             scSend(outputStream);
         } catch (Exception e) {
             e.printStackTrace();
@@ -76,16 +76,25 @@ public class testClient {
     }
 
     // メッセージをサーバ側から受け取るメソッド
-    public static void receive(InputStream inputStream) throws IOException {
-        byte[] buff = new byte[1024];
+    public static void prReceive(InputStream inputStream, boolean line) throws IOException {
+        if(line==false){
+        System.out.print(receive(inputStream));
+        }else{
+            prReceive(inputStream);
+        }
+    }
+    public static void prReceive(InputStream inputStream) throws IOException {
+        System.out.println(receive(inputStream));
+    }
 
+    public static String receive(InputStream inputStream) throws IOException {
+        byte[] buff = new byte[1024];
         try {
-            int n = inputStream.read(buff);
-            System.out.write(buff, 0, n);
+            inputStream.read(buff);
         } catch (IOException e) {
-            System.err.println("instr Exception");
             e.printStackTrace();
         }
+        return new String(buff, StandardCharsets.UTF_8);
     }
 
     // メッセージをサーバ側に送るメソッド
