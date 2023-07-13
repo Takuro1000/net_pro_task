@@ -14,7 +14,7 @@ public class testServer {
         ArrayList<ServerThread> threads = new ArrayList<>();
         ArrayList<Player> players = null;
         ServerSocket serverSocket = initializeServerSocket();
-        gamePhase gPhase = gamePhase.night;
+        gamePhase gPhase = gamePhase.end;
 
         try {
             playerNum = Integer.parseInt(args[0]);
@@ -27,7 +27,7 @@ public class testServer {
         clientAccept(threads, playerNum, serverSocket);
         threadsStart(threads);
 
-        threadsInterrupt(threads,gPhase);
+        threadsInterrupt(threads, gPhase);
         closeServerSocket(serverSocket);
     }
 
@@ -54,11 +54,11 @@ public class testServer {
         }
     }
 
-    static void threadsInterrupt(ArrayList<ServerThread> threads,gamePhase gamePhase) {
+    static void threadsInterrupt(ArrayList<ServerThread> threads, gamePhase gamePhase) {
         for (ServerThread thr : threads) {
             while (true) {
                 if (thr.getState() == Thread.State.TIMED_WAITING) {
-                    thr.phase=gamePhase;
+                    thr.phase = gamePhase;
                 }
                 if (thr.getState() == Thread.State.TIMED_WAITING) {
                     thr.interrupt();
@@ -113,15 +113,15 @@ public class testServer {
             closeSocket(socket);
         }
 
-        public void game(){
-            while(game){
+        public void game() {
+            while (game) {
                 wait10min();
-                switch(phase){
+                switch (phase) {
                     case start:
                         System.err.println("not use");
                         break;
                     case day:
-                    System.out.println(phase.geString());
+                        System.out.println(phase.geString());
                         break;
                     case night:
                         System.out.println(phase.geString());
@@ -170,10 +170,10 @@ public class testServer {
             }
         }
 
-        public static void waitSec(int sec){
-            try{
-                sleep(sec*1000);
-            }catch(InterruptedException e){
+        public static void waitSec(int sec) {
+            try {
+                sleep(sec * 1000);
+            } catch (InterruptedException e) {
                 return;
             }
         }
@@ -194,9 +194,11 @@ public class testServer {
                 e.printStackTrace();
             }
         }
+
         public static void send(OutputStream outputStream, String message) {
             send(outputStream, message, "");
         }
+
         public static void sendln(OutputStream outputStream, String message) {
             send(outputStream, message + "\n");
         }
@@ -235,17 +237,19 @@ public class testServer {
         }
     }
 
-    enum gamePhase{
+    enum gamePhase {
         start("phase:start"),
-        day("phase:start"),
-        night("phase:start"),
-        end("phase:start");
+        day("phase:day"),
+        night("phase:night"),
+        end("phase:end");
 
         private final String string;
-        private gamePhase(final String string){
+
+        private gamePhase(final String string) {
             this.string = string;
         }
-        public String geString(){
+
+        public String geString() {
             return string;
         }
     }
