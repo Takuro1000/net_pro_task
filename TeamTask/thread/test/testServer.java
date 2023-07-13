@@ -18,7 +18,7 @@ public class testServer {
 
         try {
             playerNum = Integer.parseInt(args[0]);
-        } catch (NumberFormatException e) { // NumberFormatException-文字列が解析可能な整数を含んでいない場合
+        } catch (NumberFormatException e) {
             e.printStackTrace();
             System.exit(1);
         }
@@ -99,11 +99,6 @@ public class testServer {
             this.socket = s;
         }
 
-        ServerThread(Socket s, Player player) {
-            this(s);
-            this.player = player;
-        }
-
         @Override
         public void run() {
             inputStream = initializeInputStream(socket);
@@ -132,6 +127,10 @@ public class testServer {
                         break;
                 }
             }
+        }
+
+        public void coppyPlayer(Player p) {
+            player = p;
         }
 
         public static InputStream initializeInputStream(Socket socket) {
