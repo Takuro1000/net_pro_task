@@ -76,7 +76,7 @@ public class testClient {
     }
 
     // メッセージをサーバ側から受け取るメソッド
-    public static void receive(InputStream inputStream) {
+    public static void receive(InputStream inputStream) throws IOException {
         byte[] buff = new byte[1024];
 
         try {
@@ -89,7 +89,7 @@ public class testClient {
     }
 
     // メッセージをサーバ側に送るメソッド
-    public static void send(OutputStream outputStream, String message) {
+    public static void send(OutputStream outputStream, String message) throws IOException {
         send(outputStream, message.getBytes(StandardCharsets.UTF_8));
     }
 
