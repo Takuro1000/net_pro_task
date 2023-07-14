@@ -113,7 +113,8 @@ public class testServer {
                 wait10min();
                 switch (phase) {
                     case start:
-                        System.err.println("not use");
+                        System.err.println("not use Thread end");
+                        game = false;
                         break;
                     case day:
                         System.out.println(phase.geString());
@@ -161,7 +162,8 @@ public class testServer {
             return username;
         }
 
-        public static void wait10min() {
+        public void wait10min() {
+            System.out.println(getName() + "割り込み待機（タイムアウト10分）");
             try {
                 sleep(6000000);
             } catch (InterruptedException e) {
