@@ -12,12 +12,30 @@ public class testClient {
         InputStream inputStream = initializeInputStream(socket);
         OutputStream outputStream = initializeOutputStream(socket);
         try {
-            prReceive(inputStream,false);
+            prReceive(inputStream, false);
             scSend(outputStream);
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
             closeSocket(socket, inputStream, outputStream);
+        }
+    }
+
+    public static void receiveRoopStringflag(InputStream inputStream, String roopFlag) throws Exception {
+        receiveRoopStringflag(inputStream, roopFlag, false);
+    }
+
+    public static void receiveRoopStringflag(InputStream inputStream, String roopFlag, boolean line) throws Exception {
+        String message = null;
+        while (true) {
+            message = receive(inputStream);
+            if (message == roopFlag) {
+                break;
+            } else if (line) {
+                System.out.print(message);
+            } else {
+                System.out.println(message);
+            }
         }
     }
 
@@ -77,12 +95,13 @@ public class testClient {
 
     // メッセージをサーバ側から受け取るメソッド
     public static void prReceive(InputStream inputStream, boolean line) throws IOException {
-        if(line==false){
-        System.out.print(receive(inputStream));
-        }else{
+        if (line == false) {
+            System.out.print(receive(inputStream));
+        } else {
             prReceive(inputStream);
         }
     }
+
     public static void prReceive(InputStream inputStream) throws IOException {
         System.out.println(receive(inputStream));
     }
