@@ -31,6 +31,16 @@ public class testServer {
         closeServerSocket(serverSocket);
     }
 
+    static void threadsCheckSleep(ArrayList<ServerThread> threads){
+        for(ServerThread thr : threads){
+            while(true){
+                if (thr.getState() == Thread.State.TIMED_WAITING) {
+                    break;
+                }
+            }
+        }
+    }
+
     static void initializePlayerArray(ArrayList<Player> players, int playerNum) {
         players = new ArrayList<Player>(playerNum);
     }
@@ -56,11 +66,10 @@ public class testServer {
 
     static void threadsInterrupt(ArrayList<ServerThread> threads, gamePhase gamePhase) {
         for (ServerThread thr : threads) {
+            threadsCheckSleep(threads);
             while (true) {
                 if (thr.getState() == Thread.State.TIMED_WAITING) {
                     thr.phase = gamePhase;
-                }
-                if (thr.getState() == Thread.State.TIMED_WAITING) {
                     thr.interrupt();
                     break;
                 }
