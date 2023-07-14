@@ -30,16 +30,16 @@ public class testServer {
         closeServerSocket(serverSocket);
     }
 
-    static void printAllPlayerName(ArrayList<ServerThread> threads){
+    static void printAllPlayerName(ArrayList<ServerThread> threads) {
         threadsCheckSleep(threads);
-        for(ServerThread thr : threads){
+        for (ServerThread thr : threads) {
             System.out.println(thr.getName());
         }
     }
 
-    static void threadsCheckSleep(ArrayList<ServerThread> threads){
-        for(ServerThread thr : threads){
-            while(true){
+    static void threadsCheckSleep(ArrayList<ServerThread> threads) {
+        for (ServerThread thr : threads) {
+            while (true) {
                 if (thr.getState() == Thread.State.TIMED_WAITING) {
                     break;
                 }
@@ -104,6 +104,7 @@ public class testServer {
         OutputStream outputStream = null;
         public gamePhase phase = gamePhase.start;
         boolean game = true;
+        boolean life = true;
 
         ServerThread(Socket s) {
             this.socket = s;
@@ -127,13 +128,13 @@ public class testServer {
                         game = false;
                         break;
                     case day:
-                        System.out.println(phase.geString());
+                        System.out.println(phase.getString());
                         break;
                     case night:
-                        System.out.println(phase.geString());
+                        System.out.println(phase.getString());
                         break;
                     case end:
-                        System.out.println(phase.geString());
+                        System.out.println(phase.getString());
                         game = false;
                         break;
                 }
@@ -241,7 +242,22 @@ public class testServer {
             this.string = string;
         }
 
-        public String geString() {
+        public String getString() {
+            return string;
+        }
+    }
+
+    enum role {
+        citizn("市民"),
+        wolf("人狼");
+
+        private final String string;
+
+        private role(final String string) {
+            this.string = string;
+        }
+
+        public String getString() {
             return string;
         }
     }
