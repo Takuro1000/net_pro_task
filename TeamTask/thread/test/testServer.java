@@ -12,7 +12,6 @@ public class testServer {
     public static void main(String args[]) {
         int playerNum = 0;
         ArrayList<ServerThread> threads = new ArrayList<>();
-        ArrayList<Player> players = null;
         ServerSocket serverSocket = initializeServerSocket();
         gamePhase gPhase = gamePhase.end;
 
@@ -22,13 +21,20 @@ public class testServer {
             e.printStackTrace();
             System.exit(1);
         }
-        initializePlayerArray(players, playerNum);
 
         clientAccept(threads, playerNum, serverSocket);
         threadsStart(threads);
 
+        printAllPlayerName(threads);
         threadsInterrupt(threads, gPhase);
         closeServerSocket(serverSocket);
+    }
+
+    static void printAllPlayerName(ArrayList<ServerThread> threads){
+        threadsCheckSleep(threads);
+        for(ServerThread thr : threads){
+            System.out.println(thr.getName());
+        }
     }
 
     static void threadsCheckSleep(ArrayList<ServerThread> threads){
@@ -39,10 +45,6 @@ public class testServer {
                 }
             }
         }
-    }
-
-    static void initializePlayerArray(ArrayList<Player> players, int playerNum) {
-        players = new ArrayList<Player>(playerNum);
     }
 
     static void clientAccept(ArrayList<ServerThread> threads, int roop, ServerSocket serverSocket) {
@@ -97,7 +99,6 @@ public class testServer {
     }
 
     static class ServerThread extends Thread {
-        Player player = null;
         Socket socket = null;
         InputStream inputStream = null;
         OutputStream outputStream = null;
@@ -137,10 +138,6 @@ public class testServer {
                         break;
                 }
             }
-        }
-
-        public void coppyPlayer(Player p) {
-            player = p;
         }
 
         public static InputStream initializeInputStream(Socket socket) {
@@ -230,21 +227,6 @@ public class testServer {
             return new String(buff, StandardCharsets.UTF_8);
         }
 
-    }
-
-    class Player {
-        String playerName = null;
-        boolean life = true;
-        String role = null;
-
-        Player() {
-
-        }
-
-        Player(String name, String role) {
-            this.playerName = name;
-            this.role = role;
-        }
     }
 
     enum gamePhase {
