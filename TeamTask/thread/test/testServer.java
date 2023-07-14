@@ -105,6 +105,7 @@ public class testServer {
         public gamePhase phase = gamePhase.start;
         boolean game = true;
         boolean life = true;
+        String role = "市民";
 
         ServerThread(Socket s) {
             this.socket = s;
@@ -239,21 +240,6 @@ public class testServer {
         private final String string;
 
         private gamePhase(final String string) {
-            this.string = string;
-        }
-
-        public String getString() {
-            return string;
-        }
-    }
-
-    enum role {
-        citizn("市民"),
-        wolf("人狼");
-
-        private final String string;
-
-        private role(final String string) {
             this.string = string;
         }
 
