@@ -12,10 +12,9 @@ public class testClient {
         InputStream inputStream = initializeInputStream(socket);
         OutputStream outputStream = initializeOutputStream(socket);
         try {
+            prReceive(inputStream);
             prReceive(inputStream, false);
             scSend(outputStream);
-            waitServer(inputStream);
-            prReceive(inputStream);
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
