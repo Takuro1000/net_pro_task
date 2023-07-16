@@ -31,11 +31,10 @@ public class testServer {
         closeServerSocket(serverSocket);
     }
 
-    static void setRandomWolfRole(ArrayList<ServerThread> threads) {
-        threadsCheckSleep(threads);
+    static int setRandomWolfRole(int playerNum) {
         Random random = new Random();
-        int wolfIndex = random.nextInt(threads.size());
-        threads.get(wolfIndex).setRole("人狼");
+        int wolfIndex = random.nextInt(playerNum);
+        return wolfIndex;
     }
 
     static void printAllPlayerName(ArrayList<ServerThread> threads) {
@@ -56,10 +55,16 @@ public class testServer {
     }
 
     static void clientAccept(ArrayList<ServerThread> threads, int roop, ServerSocket serverSocket) {
+        int wolfIndex = setRandomWolfRole(roop);
         for (int i = 0; i < roop; i++) {
             try {
-                Socket socket = serverSocket.accept();
-                threads.add(new ServerThread(socket));
+                if (i == wolfIndex) {
+                    Socket socket = serverSocket.accept();
+                    threads.add(new ServerThread(socket, "人狼"));
+                } else {
+                    Socket socket = serverSocket.accept();
+                    threads.add(new ServerThread(socket));
+                }
             } catch (IOException e) {
                 System.err.println("サーバーの接続待機中にエラーが発生しました");
                 e.printStackTrace();
@@ -119,10 +124,16 @@ public class testServer {
             this.socket = s;
         }
 
+        ServerThread(Socket s, String r) {
+            this.role = r;
+            this.socket = s;
+        }
+
         @Override
         public void run() {
             inputStream = initializeInputStream(socket);
             outputStream = initializeOutputStream(socket);
+            send(outputStream, "あなたの役職は"+role+"です。");
             setName(initializeUserName(outputStream, inputStream));
             game();
             closeSocket(socket);
