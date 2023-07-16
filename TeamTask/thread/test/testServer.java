@@ -6,6 +6,7 @@ import java.net.ServerSocket;
 import java.io.OutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Random;
 import java.io.InputStream;
 
 public class testServer {
@@ -28,6 +29,13 @@ public class testServer {
         printAllPlayerName(threads);
         threadsInterrupt(threads, gPhase);
         closeServerSocket(serverSocket);
+    }
+
+    static void setRandomWolfRole(ArrayList<ServerThread> threads) {
+        threadsCheckSleep(threads);
+        Random random = new Random();
+        int wolfIndex = random.nextInt(threads.size());
+        threads.get(wolfIndex).setRole("人狼");
     }
 
     static void printAllPlayerName(ArrayList<ServerThread> threads) {
@@ -136,6 +144,7 @@ public class testServer {
                         break;
                     case end:
                         System.out.println(phase.getString());
+                        System.out.println(getName() + "は" + role + "でした");
                         game = false;
                         break;
                 }
@@ -150,6 +159,10 @@ public class testServer {
                 e.printStackTrace();
             }
             return inputStream;
+        }
+
+        public void setRole(String role) {
+            this.role = role;
         }
 
         public static OutputStream initializeOutputStream(Socket socket) {
