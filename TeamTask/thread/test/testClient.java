@@ -95,10 +95,15 @@ public class testClient {
 
     // メッセージをサーバ側から受け取るメソッド
     public static void prReceive(InputStream inputStream, boolean line) throws IOException {
-        if (line == false) {
-            System.out.print(receive(inputStream));
+        String message = receive(inputStream);
+        if (message.isEmpty()) {
+            prReceive(inputStream, line);
         } else {
-            prReceive(inputStream);
+            if (line) {
+                System.out.print(message);
+            } else {
+                System.out.println(message);
+            }
         }
     }
 
