@@ -14,6 +14,8 @@ public class testClient {
         try {
             prReceive(inputStream, false);
             scSend(outputStream);
+            waitServer(inputStream);
+            prReceive(inputStream);
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
@@ -21,8 +23,13 @@ public class testClient {
         }
     }
 
-    public static void receiveRoopStringflag(InputStream inputStream, String roopFlag) throws Exception {
-        receiveRoopStringflag(inputStream, roopFlag, false);
+    public static void waitServer(InputStream inputStream)throws Exception{
+        boolean roop = true;
+        while(roop){
+            if("in"==receive(inputStream).trim()){
+                roop=false;
+            }
+        }
     }
 
     public static void receiveRoopStringflag(InputStream inputStream, String roopFlag, boolean line) throws Exception {
